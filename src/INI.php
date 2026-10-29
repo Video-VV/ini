@@ -1,18 +1,19 @@
 <?php
 /*
-┌───────────────────────────────────────────────────────────────────────────┐
-│ Projectname:   PHP INI Class                                              │
-│ Version:       1.3 (PHP 8.4 ready)                                        │
-│ Author:        Radovan Janjic <rade@it-radionica.com> && Vlasenko Vitaly  │
-│ Last modified: 2026                                                       │
-│ Copyright (C): 2020 IT-radionica.com, All Rights Reserved                 │
-│                                                                           │
-├─┤ Description ├───────────────────────────────────────────────────────────┤
-│                                                                           │
-│ Simple PHP Class to manage INI files (read and write).                    │
-│ Adapted for PHP 8.4 with PSR-4 namespace and exceptions.                  │
-│                                                                           │
-└───────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│ Projectname:   PHP INI Class                                   │
+│ Version:       1.3.2 (PHP 8.4 ready)                           │
+│ Author:        Radovan Janjic <rade@it-radionica.com>          │
+│ Update:        Vlasenko Vitaly                                 │
+│ Last modified: 2026                                            │
+│ Copyright (C): 2020 IT-radionica.com, All Rights Reserved      │
+│                                                                │
+├─┤ Description ├────────────────────────────────────────────────┤
+│                                                                │
+│ Simple PHP Class to manage INI files (read and write).         │
+│ Adapted for PHP 8.4 with PSR-4 namespace and exceptions.       │
+│                                                                │
+└────────────────────────────────────────────────────────────────┘
 */
 
 namespace videovv\Ini;
@@ -220,11 +221,11 @@ class INI
 	 * @param 	Boolean		$sections 	- Process sections
 	 */
    function read($file = NULL, $sections = TRUE) {
-     if( empty( $file ) ) { throw new \Exception('Ошибка: Не указан путь к INI файлу'); }
+     if( empty( $file ) ) { throw new \Exception('INI file path is not specified.'); }
      $this->file = ($file) ? $file : $this->file;
-     if( !file_exists( $this->file )) { throw new \Exception('Ошибка: INI файл не найден - ' . $this->file); } 		 
-     if( is_dir( $this->file ) ) { throw new \Exception('Ошибка: Указан путь к директории, а не к файлу - ' . $this->file); }
-     if( !is_readable( $this->file ) ) { throw new \Exception('Ошибка: Нет прав на чтение файла - ' . $this->file); }
+     if( !file_exists( $this->file )) { throw new \Exception('INI file not found: ' . $this->file); } 		 
+     if( is_dir( $this->file ) ) { throw new \Exception('The specified path is a directory, not a file: ' . $this->file); }
+     if( !is_readable( $this->file ) ) { throw new \Exception('Permission denied. Cannot read file: ' . $this->file); }
 
      $this->sections = $sections;
      $this->data = parse_ini_file( realpath($this->file), $this->sections, INI_SCANNER_RAW );
@@ -491,7 +492,13 @@ class INI
         }
 			}
 		}
-
-		return (($handle = fopen($this->file, 'w')) && fwrite($handle, trim($content)) && fclose($handle)) ? TRUE : FALSE;
+    if (!$handle = @fopen($this->file, 'w')) {
+        throw new \Exception('Cannot open file for writing: ' . $this->file);
+    }
+    if (fwrite($handle, trim($content)) === false) {
+        throw new \Exception('Cannot write data to file: ' . $this->file);
+    }
+    fclose($handle);
+    return true;
 	}
 }
