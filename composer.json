@@ -1,0 +1,11 @@
+{
+    "name": "videovv/ini",
+    "description": "PHP INI Class (PHP 8.4 ready)",
+    "type": "library",
+    "version": "1.3.0",
+    "autoload": {
+        "psr-4": {
+            "videovv\\Ini\\": "src/"
+        }
+    }
+}
