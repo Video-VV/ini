@@ -2,6 +2,7 @@
     "name": "videovv/ini",
     "description": "PHP INI Class (PHP 8.4 ready)",
     "type": "library",
+    "license": "GPL-2.0-or-later",
     "version": "1.3.0",
     "autoload": {
         "psr-4": {
